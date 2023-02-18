@@ -1,5 +1,6 @@
 /.ddev/
 /vendor/
+/node_modules/
 /.idea/
 /.env
 /storage/cache/
