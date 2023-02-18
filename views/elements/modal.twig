@@ -1,0 +1,19 @@
+<dialog class="rounded">
+    <div class="flex flex-col gap-4 justify-between p-4">
+        <div>
+            {{ title }}
+        </div>
+        <div>
+            {{ content }}
+        </div>
+        <div>
+            {% for button in buttons %}
+                {% include('elements/button.twig') with {
+                    'label': button.label,
+                    'class': button.class,
+                    'onclick': button.onclick,
+                } %}
+            {% endfor %}
+        </div>
+    </div>
+</dialog>
