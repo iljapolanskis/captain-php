@@ -5,7 +5,8 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="/static/main.css">
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.png') }}">
+    <link rel="stylesheet" href="{{ asset('build/app.css') }}">
     {#    <script src="https://cdn.tailwindcss.com"></script> #}
     {% block head %}
     {% endblock %}
@@ -27,6 +28,10 @@
         function hideDialog() {
             document.querySelector('dialog').close()
         }
+
+        function redirect(url) {
+            location.href = url;
+        }
     </script>
 </head>
 <body>
@@ -40,11 +45,17 @@
         } %}
     </div>
 
-    <div>
-        <object type="image/svg+xml" data="/static/media/icons8-bash-48.svg" class="logo">
-            Kiwi Logo <!-- fallback image in CSS -->
-        </object>
-    </div>
+    <a href="/">
+        <div class="w-12 h-12">
+            <object type="image/svg+xml" data="{{ asset('build/images/logo-48.svg') }}"
+                    width="48"
+                    height="48"
+                    class="pointer-events-none"
+            >
+                <img src="" alt="logo" width="48" height="48">
+            </object>
+        </div>
+    </a>
 
     <div class="hidden md:flex">
         {% include('elements/button.twig') with {
@@ -53,30 +64,48 @@
             'onclick': "switchTheme(localStorage.theme === 'dark' ? 'light' : 'dark')"
         } %}
         {% include('elements/button.twig') with {
-            'label': 'Account',
+            'label': 'Register',
             'class': 'hidden md:block bg-blue-500 hover:bg-blue-700 active:bg-blue-900',
-            'onclick': 'toggle()'
+            'onclick': "redirect('/auth/register')"
         } %}
         {% include('elements/button.twig') with {
-            'label': 'Log Out',
+            'label': 'Log In',
             'class': 'hidden md:block bg-blue-500 hover:bg-blue-700 active:bg-blue-900',
-            'onclick': 'toggle()'
+            'onclick': "redirect('/auth/login')"
         } %}
     </div>
 </header>
 
 <section class="bg-gray-200 flex min-h-screen">
     <div class="blocker hidden absolute inset-0 bg-gray-800/80 z-30"></div>
-    <nav class="bg-red-200 hidden md:block w-2/6 md:w-1/6 min-w-fit px-4 py-6 z-50 absolute inset-0 md:relative">
-        <ul class="h-full">
-            <li><a href="#">PHP</a></li>
-            <li><a href="#">DDEV</a></li>
-            <li><a href="#">Magento 2</a></li>
-            <li class=""><a href="#">Projects</a></li>
+    <nav class="bg-gray-300 hidden md:block w-2/6 md:w-1/6 min-w-fit px-4 py-6 z-50 absolute inset-0 md:relative">
+        <ul class="flex flex-col gap-4 h-full text-white font-bold">
+            <a href="#!">
+                <li class="border-gray-300 bg-blue-500 hover:bg-blue-700 active:bg-blue-800 w-full p-4 rounded-xl text-center">
+                    PHP
+                </li>
+            </a>
+            <a href="#!">
+                <li class="border-gray-300 bg-blue-500 hover:bg-blue-700 active:bg-blue-800 w-full p-4 rounded-xl text-center">
+                    DDEV
+                </li>
+            </a>
+            <a href="#!">
+                <li class="border-gray-300 bg-blue-500 hover:bg-blue-700 active:bg-blue-800 w-full p-4 rounded-xl text-center">
+                    Magento
+                </li>
+            </a>
+            <a href="#!">
+                <li class="border-gray-300 bg-blue-500 hover:bg-blue-700 active:bg-blue-800 w-full p-4 rounded-xl text-center">
+                    Go
+                </li>
+            </a>
+            <a href="#!">
+                <li class="border-gray-300 bg-blue-500 hover:bg-blue-700 active:bg-blue-800 w-full p-4 rounded-xl text-center">
+                    Projects
+                </li>
+            </a>
         </ul>
-        <div class="absolute bottom-4">
-            <a href="#">About Me</a>
-        </div>
     </nav>
 
     <script>
@@ -106,17 +135,15 @@
         {% endblock %}
     </article>
 
-    <aside class="bg-amber-200 w-1/6 hidden md:block">
-        <div class="py-6 px-4">
-            <h4>Epcot Center</h4>
-            <p>Epcot is a theme park at Walt Disney World Resort featuring exciting attractions, international
-                pavilions,
-                award-winning fireworks and seasonal special events.</p>
-        </div>
+    <aside class="bg-gray-300 w-1/6 hidden md:block">
+        <div id="feed"></div>
+        {% block aside %}
+        {% endblock %}
     </aside>
 </section>
 
 <footer class="bg-blue-200 p-6 flex justify-center">
+    {{ encore_entry_script_tags('feed') }}
     {% block footer %}
     {% endblock %}
     <p>© {{ 'now' | date('Y') }} Ilja Polanskis - Backend Web Developer</p>

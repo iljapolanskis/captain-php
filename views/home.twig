@@ -2,11 +2,7 @@
 
 {% block head %}
     <title>Captain PHP</title>
-    <link rel="stylesheet" href="/static/highlight/monokai.min.css">
-    <link rel="stylesheet" href="/static/highlight/highlightjs-copy.min.css"/>
-{% endblock %}
-
-{% block aside %}
+    <link rel="stylesheet" href="{{ asset('build/blog.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -156,13 +152,10 @@
     </div>
 {% endblock %}
 
+{% block aside %}
+    {% include('alpine/feed.html') %}
+{% endblock %}
+
 {% block footer %}
-    <script defer src="/static/highlight/highlightjs-copy.min.js"></script>
-    <script defer src="/static/highlight/highlight.min.js"></script>
-    <script type="application/javascript">
-        window.addEventListener('load', function () {
-            hljs.addPlugin(new CopyButtonPlugin());
-            hljs.highlightAll();
-        })
-    </script>
+    {{ encore_entry_script_tags('blog') }}
 {% endblock %}

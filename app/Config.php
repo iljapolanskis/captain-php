@@ -2,58 +2,40 @@
 
 namespace App;
 
+use App\Api\ConfigInterface;
+use App\Enum\AppEnvironment;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\ORMSetup;
 use PubNub\PNConfiguration;
 
-/**
- * Shares configuration data across the application
- */
-class Config
+class Config implements ConfigInterface
 {
-    /** @var array|array[] */
-    protected array $config = [];
-
     /** @var \Doctrine\ORM\Configuration|null */
     private ?Configuration $ormConfiguration = null;
 
     /** @var \PubNub\PNConfiguration|null */
     private ?PNConfiguration $pubNubConfig = null;
 
-    /**
-     * @param array $env
-     */
-    public function __construct(array $env)
-    {
-        $this->config = [
-            'isLive' => $env['APP_ENV'] === 'live',
-            'isLocal' => $env['APP_ENV'] === 'local',
-            'db' => [
-                'host' => $env['DB_HOST'],
-                'user' => $env['DB_USER'],
-                'password' => $env['DB_PASS'],
-                'dbname' => $env['DB_DATABASE'],
-                'driver' => $env['DB_DRIVER'] ?? 'pdo_mysql',
-            ],
-            'pubnub' => [
-                'publishKey' => $env['PUBNUB_PUBLISH_KEY'],
-                'subscribeKey' => $env['PUBNUB_SUBSCRIBE_KEY'],
-                'secretKey' => $env['PUBNUB_SECRET_KEY'],
-                'uuid' => $env['PUBNUB_UUID'],
-            ],
-            'abstract' => [
-                'apiKey' => $env['ABSTRACT_EMAIL_API_KEY'],
-            ]
-        ];
-    }
+    public function __construct(private readonly array $config) {}
 
-    /**
-     * @param string $name
-     * @return array|mixed|null
-     */
-    public function __get(string $name)
+    public function get(string $name, mixed $default = null): mixed
     {
-        return $this->config[$name] ?? null;
+        $path = explode('.', $name);
+        $value = $this->config[array_shift($path)] ?? null;
+
+        if ($value === null) {
+            return $default;
+        }
+
+        foreach ($path as $key) {
+            if (! isset($value[$key])) {
+                return $default;
+            }
+
+            $value = $value[$key];
+        }
+
+        return $value;
     }
 
     /**
@@ -64,7 +46,7 @@ class Config
         if ($this->ormConfiguration === null) {
             $this->ormConfiguration = ORMSetup::createAttributeMetadataConfiguration(
                 [ENTITY_PATH],
-                $this->isLocal
+                $this->isLocal(),
             );
         }
 
@@ -79,11 +61,21 @@ class Config
     {
         if ($this->pubNubConfig === null) {
             $pnConfig = new PNConfiguration();
-            $pnConfig->setPublishKey($this->pubnub['publishKey']);
-            $pnConfig->setSubscribeKey($this->pubnub['subscribeKey']);
-            $pnConfig->setUuid($this->pubnub['uuid']);
+            $pnConfig->setPublishKey($this->get('pubnub.publishKey'));
+            $pnConfig->setSubscribeKey($this->get('pubnub.subscribeKey'));
+            $pnConfig->setUuid($this->get('pubnub.uuid'));
             $this->pubNubConfig = $pnConfig;
         }
         return $this->pubNubConfig;
+    }
+
+    public function isLocal(): bool
+    {
+        return AppEnvironment::isLocal($this->get('app_environment'));
+    }
+
+    public function isLive(): bool
+    {
+        return AppEnvironment::isLive($this->get('app_environment'));
     }
 }

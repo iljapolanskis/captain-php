@@ -1,6 +1,12 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-    content: ["./views/*.twig", "./views/elements/*.twig"],
+    content: [
+        "./resources/js/*.js",
+        "./views/*.twig",
+        "./views/**/*.html",
+        "./views/**/*.twig",
+        "./views/elements/*.twig"
+    ],
     darkMode: 'class',
     presets: [],
     theme: {
