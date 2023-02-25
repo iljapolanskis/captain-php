@@ -3,18 +3,26 @@
 use App\Controller\AuthController;
 use App\Controller\CurlController;
 use App\Controller\HomeController;
-use App\Controller\PubNubController;
+use App\Middleware\Routes\AuthorizeMiddleware;
+use App\Middleware\Routes\GuestMiddleware;
 use Slim\App;
 
 return static function (App $app) {
-    $app->get('/', [HomeController::class, 'index']);
-    $app->get('/curl', [CurlController::class, 'get']);
+    $app->get('/', [HomeController::class, 'index'])->add(AuthorizeMiddleware::class);
+    $app->get('/curl', [CurlController::class, 'get'])->add(AuthorizeMiddleware::class);
+
     // PubNub
-    $app->post('/pubnub/publish', [PubNubController::class, 'publish']);
+//    $app->post('/pubnub/publish', [PubNubController::class, 'publish'])->add(AuthorizeMiddleware::class);
+
+    // HTML Projects
+//    $app->get('/html-projects/witcher-parallax', [HtmlProjectsController::class, 'witcherParallax'])->add(AuthorizeMiddleware::class);
 
     // Auth
-    $app->get('/auth/login', [AuthController::class, 'loginView']);
-    $app->get('/auth/register', [AuthController::class, 'registerView']);
-    $app->post('/auth/login', [AuthController::class, 'login']);
-    $app->post('/auth/register', [AuthController::class, 'register']);
+    $app->get('/auth/login', [AuthController::class, 'loginView'])->add(GuestMiddleware::class);
+    $app->post('/auth/login', [AuthController::class, 'login'])->add(GuestMiddleware::class);
+
+    $app->get('/auth/register', [AuthController::class, 'registerView'])->add(GuestMiddleware::class);
+    $app->post('/auth/register', [AuthController::class, 'register'])->add(GuestMiddleware::class);
+
+    $app->get('/auth/logout', [AuthController::class, 'logout'])->add(AuthorizeMiddleware::class);
 };

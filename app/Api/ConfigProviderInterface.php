@@ -8,7 +8,7 @@ use PubNub\PNConfiguration;
 /**
  * Agreement for sharing configuration data across the application
  */
-interface ConfigInterface
+interface ConfigProviderInterface
 {
     /**
      * @param string $name
@@ -28,9 +28,19 @@ interface ConfigInterface
     public function isLive(): bool;
 
     /**
+     * @return array
+     */
+    public function getSessionConfiguration(): array;
+
+    /**
      * @return \Doctrine\ORM\Configuration
      */
     public function getOrmConfiguration(): Configuration;
+
+    /*
+     * @return array
+     */
+    public function getRedisConfiguration(): array;
 
     /**
      * @return \PubNub\PNConfiguration

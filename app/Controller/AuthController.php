@@ -2,19 +2,23 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
+use App\Api\AuthInterface;
+use App\Api\RequestValidatorFactoryInterface;
+use App\DTO\RegisterUserData;
+use App\DTO\Validator\LoginUserDataValidator;
+use App\DTO\Validator\RegisterUserDataRequestValidator;
 use App\Exception\ValidationException;
-use Doctrine\ORM\EntityManager;
 use Slim\Psr7\Request;
 use Slim\Psr7\Response;
 use Slim\Views\Twig;
-use Valitron\Validator;
 
 class AuthController
 {
+
     public function __construct(
-        private Twig $twig,
-        private EntityManager $entityManager,
+        private readonly Twig $twig,
+        private readonly RequestValidatorFactoryInterface $requestValidatorFactory,
+        private readonly AuthInterface $auth,
     ) {}
 
     public function loginView(Request $request, Response $response): Response
@@ -29,43 +33,31 @@ class AuthController
 
     public function login(Request $request, Response $response): Response
     {
-        $data = $request->getParsedBody();
-        $response->getBody()->write(json_encode($data));
+        $data = $this->requestValidatorFactory
+            ->make(LoginUserDataValidator::class)
+            ->validate($request->getParsedBody());
 
-        return $response->withHeader('Content-Type', 'application/json')->withStatus(201);
-//        return $response->withHeader('Location', '/')->withStatus(302);
+        if (! $this->auth->attemptLogin($data)) {
+            throw new ValidationException(['password' => ['Invalid credentials.']]);
+        }
+
+        return $response->withHeader('Location', '/')->withStatus(302);
     }
 
     public function register(Request $request, Response $response): Response
     {
-        $data = $request->getParsedBody();
+        $data = $this->requestValidatorFactory
+            ->make(RegisterUserDataRequestValidator::class)
+            ->validate($request->getParsedBody());
 
-        $validator = new Validator($data);
-        $validator->rule('required', ['name', 'email', 'password', 'passwordConfirm']);
-        $validator->rule('email', 'email');
-        $validator->rule('equals', 'password', 'passwordConfirm')->message('Passwords do not match.');
-        $validator->rule(function ($field, $value, $params, $fields) {
-            return $this->entityManager->getRepository(User::class)->count(['email' => $value]) === 0;
-        }, 'email')->message('Email is already taken.');
-        $validator->rule(function ($field, $value, $params, $fields) {
-            return $this->entityManager->getRepository(User::class)->count(['name' => $value]) === 0;
-        }, 'name')->message('Username is already taken.');
+        $this->auth->register(new RegisterUserData($data['name'], $data['email'], $data['password']));
 
+        return $response->withHeader('Location', '/')->withStatus(302);
+    }
 
-        if (! $validator->validate()) {
-            throw new ValidationException($validator->errors());
-        }
-
-        $user = new User();
-
-        $user->setName($data['name']);
-        $user->setEmail($data['email']);
-        $user->setPassword(password_hash($data['password'], PASSWORD_BCRYPT, ['cost' => 12]));
-
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
-
-        return $response->withHeader('Content-Type', 'application/json')->withStatus(201);
-//        return $response->withHeader('Location', '/')->withStatus(302);
+    public function logout(Request $request, Response $response): Response
+    {
+        $this->auth->logOut();
+        return $response->withHeader('Location', '/')->withStatus(302);
     }
 }

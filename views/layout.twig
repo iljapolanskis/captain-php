@@ -73,6 +73,11 @@
             'class': 'hidden md:block bg-blue-500 hover:bg-blue-700 active:bg-blue-900',
             'onclick': "redirect('/auth/login')"
         } %}
+        {% include('elements/button.twig') with {
+            'label': 'Log Out',
+            'class': 'hidden md:block bg-blue-500 hover:bg-blue-700 active:bg-blue-900',
+            'onclick': "redirect('/auth/logout')"
+        } %}
     </div>
 </header>
 

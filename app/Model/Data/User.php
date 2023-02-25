@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Entity;
+namespace App\Model\Data;
 
+use App\Api\Data\UserInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
@@ -17,7 +18,7 @@ use Doctrine\Persistence\Event\LifecycleEventArgs;
 
 #[Entity, Table(name: 'users')]
 #[HasLifecycleCallbacks]
-class User
+class User implements UserInterface
 {
     #[Id, Column(options: ['unsigned' => true]), GeneratedValue]
     private int $id;
@@ -166,7 +167,7 @@ class User
     }
 
     /**
-     * @param \App\Entity\Category $category
+     * @param \App\Model\Data\Category $category
      * @return User
      */
     public function addCategory(Category $category): User
@@ -184,7 +185,7 @@ class User
     }
 
     /**
-     * @param \App\Entity\Transaction $transaction
+     * @param \App\Model\Data\Transaction $transaction
      * @return User
      */
     public function addTransaction(Transaction $transaction): User

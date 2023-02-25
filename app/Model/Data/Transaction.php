@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity;
+namespace App\Model\Data;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -146,7 +146,7 @@ class Transaction
     }
 
     /**
-     * @return \App\Entity\User
+     * @return \App\Model\Data\User
      */
     public function getUser(): User
     {
@@ -154,7 +154,7 @@ class Transaction
     }
 
     /**
-     * @param \App\Entity\User $user
+     * @param \App\Model\Data\User $user
      * @return Transaction
      */
     public function setUser(User $user): Transaction
@@ -167,7 +167,7 @@ class Transaction
     }
 
     /**
-     * @return \App\Entity\Category
+     * @return \App\Model\Data\Category
      */
     public function getCategory(): Category
     {
@@ -175,7 +175,7 @@ class Transaction
     }
 
     /**
-     * @param \App\Entity\Category $category
+     * @param \App\Model\Data\Category $category
      * @return Transaction
      */
     public function setCategory(Category $category): Transaction

@@ -3,7 +3,7 @@
 
 declare(strict_types=1);
 
-use App\Api\ConfigInterface;
+use App\Api\ConfigProviderInterface;
 use Doctrine\Migrations\Configuration\EntityManager\ExistingEntityManager;
 use Doctrine\Migrations\Configuration\Migration\PhpFile;
 use Doctrine\Migrations\DependencyFactory;
@@ -13,7 +13,7 @@ use Doctrine\ORM\Tools\Console\EntityManagerProvider\SingleManagerProvider;
 use Symfony\Component\Console\Application;
 
 $container = require __DIR__ . '/../bootstrap.php';
-$config = $container->get(ConfigInterface::class);
+$config = $container->get(ConfigProviderInterface::class);
 
 $entityManager = $container->get(EntityManager::class);
 $dependencyFactory = DependencyFactory::fromEntityManager(

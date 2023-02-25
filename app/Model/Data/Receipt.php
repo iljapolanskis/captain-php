@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity;
+namespace App\Model\Data;
 
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
@@ -69,7 +69,7 @@ class Receipt
     }
 
     /**
-     * @return \App\Entity\Transaction
+     * @return \App\Model\Data\Transaction
      */
     public function getTransaction(): Transaction
     {
@@ -77,7 +77,7 @@ class Receipt
     }
 
     /**
-     * @param \App\Entity\Transaction $transaction
+     * @param \App\Model\Data\Transaction $transaction
      * @return Receipt
      */
     public function setTransaction(Transaction $transaction): Receipt
