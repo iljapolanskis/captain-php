@@ -1,0 +1,27 @@
+{
+  "entrypoints": {
+    "app": {
+      "js": [
+        "/build/runtime.0120e566.js",
+        "/build/app.c31af1f9.js"
+      ],
+      "css": [
+        "/build/app.3035e4b5.css"
+      ]
+    },
+    "alpine": {
+      "js": [
+        "/build/runtime.0120e566.js",
+        "/build/306.3a65e1ef.js",
+        "/build/alpine.14923eeb.js"
+      ]
+    },
+    "ck-editor": {
+      "js": [
+        "/build/runtime.0120e566.js",
+        "/build/234.14fae342.js",
+        "/build/ck-editor.589e387a.js"
+      ]
+    }
+  }
+}
