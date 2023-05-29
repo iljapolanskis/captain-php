@@ -2,6 +2,7 @@
 
 namespace App\Model\Data;
 
+use App\Api\Data\PostInterface;
 use App\Api\Data\UserInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -44,16 +45,20 @@ class User implements UserInterface
     #[OneToMany(mappedBy: 'user', targetEntity: Transaction::class)]
     private Collection $transactions;
 
+    #[OneToMany(mappedBy: 'user', targetEntity: Post::class)]
+    private Collection $posts;
+
     public function __construct()
     {
         $this->categories = new ArrayCollection();
         $this->transactions = new ArrayCollection();
+        $this->posts = new ArrayCollection();
     }
 
     #[PrePersist, PreUpdate]
     public function updateTimeStamps(LifecycleEventArgs $args)
     {
-        if (! isset($this->createdAt)) {
+        if (!isset($this->createdAt)) {
             $this->createdAt = new \DateTime();
         }
 
@@ -191,6 +196,24 @@ class User implements UserInterface
     public function addTransaction(Transaction $transaction): User
     {
         $this->transactions->add($transaction);
+        return $this;
+    }
+
+    /**
+     * @return PostInterface[]
+     */
+    public function getPosts(): array
+    {
+        return $this->posts->toArray();
+    }
+
+    /**
+     * @param \App\Model\Data\Post $post
+     * @return User
+     */
+    public function addPost(Post $post): User
+    {
+        $this->posts->add($post);
         return $this;
     }
 }

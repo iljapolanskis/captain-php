@@ -2,40 +2,41 @@
 
 namespace App\Model\Data;
 
+use App\Api\Data\CategoryInterface;
+use App\Api\Data\PostInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
-use Doctrine\ORM\Mapping\ManyToOne;
-use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\Table;
 
+/**
+ *
+ */
 #[Entity, Table(name: 'categories')]
-class Category
+class Category implements CategoryInterface
 {
+    /** @var int */
     #[Id, Column(options: ['unsigned' => true]), GeneratedValue]
     private int $id;
 
+    /** @var string */
     #[Column]
     private string $name;
 
-    #[Column(name: 'created_at')]
-    private \DateTime $createdAt;
+    /** @var Collection */
+    #[ManyToMany(targetEntity: Post::class, mappedBy: 'categories')]
+    private Collection $posts;
 
-    #[Column(name: 'updated_at')]
-    private \DateTime $updatedAt;
-
-    #[ManyToOne(inversedBy: 'categories')]
-    private User $user;
-
-    #[OneToMany(mappedBy: 'category', targetEntity: Transaction::class)]
-    private Collection $transactions;
-
+    /**
+     *
+     */
     public function __construct()
     {
-        $this->transactions = new ArrayCollection();
+        $this->posts = new ArrayCollection();
     }
 
     /**
@@ -65,77 +66,28 @@ class Category
     }
 
     /**
-     * @return \DateTime
+     * @return Collection
      */
-    public function getCreatedAt(): \DateTime
+    public function getPosts(): Collection
     {
-        return $this->createdAt;
+        return $this->posts;
     }
 
     /**
-     * @param \DateTime $createdAt
-     * @return Category
+     * @param PostInterface $post
+     * @return $this
      */
-    public function setCreatedAt(\DateTime $createdAt): Category
+    public function addPost(PostInterface $post): Category
     {
-        $this->createdAt = $createdAt;
+        $this->posts->add($post);
         return $this;
     }
 
     /**
-     * @return \DateTime
+     * @inheritDoc
      */
-    public function getUpdatedAt(): \DateTime
+    public function getUrl(): string
     {
-        return $this->updatedAt;
-    }
-
-    /**
-     * @param \DateTime $updatedAt
-     * @return Category
-     */
-    public function setUpdatedAt(\DateTime $updatedAt): Category
-    {
-        $this->updatedAt = $updatedAt;
-        return $this;
-    }
-
-    /**
-     * @return \App\Model\Data\User
-     */
-    public function getUser(): User
-    {
-        return $this->user;
-    }
-
-    /**
-     * @param \App\Model\Data\User $user
-     * @return Category
-     */
-    public function setUser(User $user): Category
-    {
-        $user->addCategory($this);
-
-        $this->user = $user;
-
-        return $this;
-    }
-
-    /**
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getTransactions(): Collection
-    {
-        return $this->transactions;
-    }
-
-    /**
-     * @param \App\Model\Data\Transaction $transaction
-     * @return Category
-     */
-    public function addTransaction(Transaction $transaction): Category
-    {
-        $this->transactions->add($transaction);
-        return $this;
+        return '/post/' . $this->getName();
     }
 }

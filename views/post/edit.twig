@@ -1,0 +1,50 @@
+{% extends 'layout.twig' %}
+
+{% block head %}
+    <title>Create/Edit Post</title>
+{% endblock %}
+
+{% block content %}
+    <form method="post">
+
+        {% include('elements/input.twig') with {
+            'name': 'Title',
+            'type': 'text',
+            'label': 'Title',
+            'placeholder': 'Enter title',
+            'value': post.title,
+            'error': errors.title | first,
+            'svg': 'logo-48'
+        } %}
+
+        {% include('elements/input.twig') with {
+            'name': 'slug',
+            'type': 'text',
+            'label': 'Slug',
+            'placeholder': 'Enter slug',
+            'value': post.slug,
+            'error': errors.slug | first,
+            'svg': 'logo-48'
+        } %}
+
+        {% include('elements/editor.twig') with {
+            'name': 'content',
+            'content': post.content | raw,
+            'label': 'Post Content',
+        } %}
+
+        {% include('elements/button.twig') with {
+            'type': 'submit',
+            'label': 'Save',
+            'class': 'bg-blue-500 hover:bg-blue-700 active:bg-blue-900',
+        } %}
+
+        {{ csrf.fields | raw }}
+    </form>
+
+{% endblock %}
+
+{% block footer %}
+    {{ encore_entry_script_tags('blog') }}
+    {{ encore_entry_script_tags('ck-editor') }}
+{% endblock %}

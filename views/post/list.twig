@@ -1,0 +1,19 @@
+{% extends 'layout/base.twig' %}
+
+
+{% block head %}
+    <title>{{ post.title }}</title>
+    <link rel="stylesheet" href="{{ asset('build/blog.css') }}">
+{% endblock %}
+
+{% block content %}
+    <ul role="list" class="divide-y divide-gray-100">
+        {% for post in posts %}
+            {% include 'post/elements/list-item.twig' %}
+        {% endfor %}
+    </ul>
+{% endblock %}
+
+{% block footer %}
+    {{ encore_entry_script_tags('blog') }}
+{% endblock %}

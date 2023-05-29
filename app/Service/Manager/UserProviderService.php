@@ -10,7 +10,9 @@ use Doctrine\ORM\EntityManager;
 
 class UserProviderService implements UserProviderInterface
 {
-    public function __construct(private readonly EntityManager $entityManager) {}
+    public function __construct(private readonly EntityManager $entityManager)
+    {
+    }
 
     public function getById(int $id): ?UserInterface
     {

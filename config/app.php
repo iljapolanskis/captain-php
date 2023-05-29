@@ -25,6 +25,7 @@ return [
         'entity_dir' => [APP_PATH . '/Entity'],
         'connection' => [
             'driver' => $_ENV['DB_DRIVER'] ?? 'pdo_mysql',
+            'path' => $_ENV['DB_PATH'] ?? STORAGE_PATH . '/db.sqlite',
             'host' => $_ENV['DB_HOST'] ?? 'localhost',
             'port' => $_ENV['DB_PORT'] ?? 3306,
             'dbname' => $_ENV['DB_NAME'],

@@ -16,7 +16,8 @@ class ValidationExceptionMiddleware implements MiddlewareInterface
     public function __construct(
         private readonly SessionInterface $session,
         private readonly ResponseFactoryInterface $responseFactory
-    ) {}
+    ) {
+    }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
@@ -27,7 +28,7 @@ class ValidationExceptionMiddleware implements MiddlewareInterface
 
             $this
                 ->putErrorsIntoSession($e)
-                ->putOldDataIntoSession($request);
+                ->putInputIntoForm($request);
 
             $referer = $request->getHeaderLine('Referer');
             return $response->withHeader('Location', $referer)->withStatus(302);
@@ -36,15 +37,25 @@ class ValidationExceptionMiddleware implements MiddlewareInterface
 
     private function putErrorsIntoSession(ValidationException $e): self
     {
-        $this->session->put(SessionConstants::Errors->value, $e->errors);
+        $errors = $e->errors;
+
+        $errorCount = 0;
+        foreach ($errors as $error) {
+            $errorCount += count($error);
+        }
+
+        $errors['error_count'] = $errorCount;
+
+        $this->session->put(SessionConstants::FormErrors->value, $errors);
+
         return $this;
     }
 
-    private function putOldDataIntoSession(ServerRequestInterface $request): self
+    private function putInputIntoForm(ServerRequestInterface $request): self
     {
-        $guarded = ['password', 'passwordConfirm'];
+        $guarded = ['password', 'password_confirm'];
         $this->session->put(
-            SessionConstants::Old->value,
+            SessionConstants::FormInput->value,
             array_diff_key($request->getParsedBody(), array_flip($guarded))
         );
         return $this;

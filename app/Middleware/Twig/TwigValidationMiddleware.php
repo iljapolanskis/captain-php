@@ -18,24 +18,25 @@ class TwigValidationMiddleware implements MiddlewareInterface
     public function __construct(
         private readonly SessionInterface $session,
         private readonly Twig $twig
-    ) {}
+    ) {
+    }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if ($this->session->has(SessionConstants::Errors->value)) {
+        if ($this->session->has(SessionConstants::FormErrors->value)) {
             $this->twig->getEnvironment()->addGlobal(
-                SessionConstants::Errors->value,
-                $this->session->get(SessionConstants::Errors->value)
+                SessionConstants::FormErrors->value,
+                $this->session->get(SessionConstants::FormErrors->value)
             );
-            $this->session->forget(SessionConstants::Errors->value);
+            $this->session->forget(SessionConstants::FormErrors->value);
         }
 
-        if ($this->session->has(SessionConstants::Old->value)) {
+        if ($this->session->has(SessionConstants::FormInput->value)) {
             $this->twig->getEnvironment()->addGlobal(
-                SessionConstants::Old->value,
-                $this->session->get(SessionConstants::Old->value)
+                SessionConstants::FormInput->value,
+                $this->session->get(SessionConstants::FormInput->value)
             );
-            $this->session->forget(SessionConstants::Old->value);
+            $this->session->forget(SessionConstants::FormInput->value);
         }
 
         return $handler->handle($request);

@@ -1,0 +1,35 @@
+{# Expects field array [
+        'id' => 'id', // optional, defaults to name
+        'name' => 'name',
+        'type' => 'text', // optional, defaults to text
+        'label' => 'Name',
+        'description' => 'Your full name',
+        'value' => 'John Doe',
+        'error' => 'This field is required',
+    ]
+#}
+<fieldset>
+    <legend class="sr-only">{{ label }}</legend>
+    <div class="space-y-5">
+        <div class="relative flex items-start">
+            <div class="flex h-6 items-center">
+                <input id="{{ id ?? name }}" aria-describedby="comments-description" name="{{ name }}"
+                       type="checkbox"
+                        {% if checked %}
+                            checked
+                        {% endif %}
+                       class="h-4 w-4 rounded border-gray-300 focus:ring-indigo-600">
+            </div>
+            <div class="ml-3 text-sm leading-6">
+                <label for="{{ id ?? name }}" class="font-medium">{{ label }}</label>
+                {% if description is defined %}
+                    <p id="{{ name }}-description" class="text-gray-400">{{ description }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% if error is defined %}
+        <span class="flex items-center font-medium tracking-wide text-red-500 text-xs mt-1 ml-1"> {{ error }} </span>
+    {% endif %}
+</fieldset>
