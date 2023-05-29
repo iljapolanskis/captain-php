@@ -14,12 +14,12 @@ use Slim\Views\Twig;
 
 class AuthController
 {
-
     public function __construct(
         private readonly Twig $twig,
         private readonly RequestValidatorFactoryInterface $requestValidatorFactory,
         private readonly AuthInterface $auth,
-    ) {}
+    ) {
+    }
 
     public function loginView(Request $request, Response $response): Response
     {
@@ -37,7 +37,7 @@ class AuthController
             ->make(LoginUserDataValidator::class)
             ->validate($request->getParsedBody());
 
-        if (! $this->auth->attemptLogin($data)) {
+        if (!$this->auth->attemptLogin($data)) {
             throw new ValidationException(['password' => ['Invalid credentials.']]);
         }
 

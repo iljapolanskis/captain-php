@@ -21,10 +21,8 @@ Encore
      * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
      */
     .addEntry("app", "./resources/js/app.js")
-    .addEntry("dashboard", "./resources/js/dashboard.js")
-    .addEntry("auth", "./resources/js/auth.js")
-    .addEntry("blog", "./resources/js/blog.js")
-    .addEntry("feed", "./resources/js/feed.js")
+    .addEntry("alpine", "./resources/js/alpine.js")
+    .addEntry("ck-editor", "./resources/js/ck-editor.js")
 
     // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
     .splitEntryChunks()

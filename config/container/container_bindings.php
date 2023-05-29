@@ -1,13 +1,20 @@
 <?php
 
+// phpcs:disable Generic.Files.LineLength.TooLong
+
 use App\Api\AuthInterface;
 use App\Api\ConfigProviderInterface;
+use App\Api\Manager\CategoryProviderInterface;
+use App\Api\Manager\PostProviderInterface;
 use App\Api\Manager\UserProviderInterface;
 use App\Api\RequestValidatorFactoryInterface;
 use App\Api\SessionInterface;
+use App\Exception\CsrfException;
 use App\Model\Factory\RequestValidatorFactory;
 use App\Service\AuthProviderService;
 use App\Service\ConfigProviderService;
+use App\Service\Manager\CategoryProviderService;
+use App\Service\Manager\PostProviderService;
 use App\Service\Manager\UserProviderService;
 use App\Service\SessionProviderService;
 use Doctrine\DBAL\Connection;
@@ -18,6 +25,7 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use PubNub\PubNub;
 use Slim\App;
+use Slim\Csrf\Guard;
 use Slim\Factory\AppFactory;
 use Slim\Views\Twig;
 use Symfony\Bridge\Twig\Extension\AssetExtension;
@@ -28,8 +36,6 @@ use Symfony\WebpackEncoreBundle\Asset\EntrypointLookup;
 use Symfony\WebpackEncoreBundle\Asset\TagRenderer;
 use Symfony\WebpackEncoreBundle\Twig\EntryFilesTwigExtension;
 use Twig\Extra\Intl\IntlExtension;
-
-// phpcs:ignoreFile
 
 return [
     /**
@@ -47,11 +53,13 @@ return [
 
         return $app;
     },
-    ConfigProviderInterface::class => static fn() => new ConfigProviderService(require CONFIG_PATH . '/app.php'),
+
     SessionInterface::class => static fn(ConfigProviderInterface $config) => new SessionProviderService($config->getSessionConfiguration()),
+    RequestValidatorFactoryInterface::class => static fn(ContainerInterface $container) => $container->get(RequestValidatorFactory::class),
+
+    ConfigProviderInterface::class => static fn() => new ConfigProviderService(require CONFIG_PATH . '/app.php'),
     AuthInterface::class => static fn(ContainerInterface $container) => $container->get(AuthProviderService::class),
     ResponseFactoryInterface::class => static fn(App $app) => $app->getResponseFactory(),
-    RequestValidatorFactoryInterface::class => static fn(ContainerInterface $container) => $container->get(RequestValidatorFactory::class),
 
     /**
      * View services
@@ -68,12 +76,18 @@ return [
 
         return $twig;
     },
+
     'webpack_encore.packages' => static fn() => new Packages(
         new Package(new JsonManifestVersionStrategy(BUILD_PATH . '/manifest.json'))
     ),
     'webpack_encore.tag_renderer' => static fn(ContainerInterface $container) => new TagRenderer(
         new EntrypointLookup(BUILD_PATH . '/entrypoints.json'),
         $container->get('webpack_encore.packages')
+    ),
+    'csrf' => static fn(ResponseFactoryInterface $responseFactory) => new Guard(
+        $responseFactory,
+        failureHandler: fn() => throw new CsrfException('CSRF token validation failed'),
+        persistentTokenMode: true
     ),
 
     /**
@@ -93,6 +107,8 @@ return [
      * Models Data & Managers
      */
     UserProviderInterface::class => static fn(ContainerInterface $container) => $container->get(UserProviderService::class),
+    PostProviderInterface::class => static fn(ContainerInterface $container) => $container->get(PostProviderService::class),
+    CategoryProviderInterface::class => static fn(ContainerInterface $container) => $container->get(CategoryProviderService::class),
 
     /**
      * Third party services

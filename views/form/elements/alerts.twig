@@ -1,0 +1,25 @@
+{% if form_errors %}
+    <div class="rounded-md bg-red-50 p-4">
+        <div class="flex">
+            <div class="flex-shrink-0">
+                {% include 'elements/svg/error.twig' %}
+            </div>
+            <div class="ml-3">
+                <h3 class="text-sm font-medium text-red-800">There
+                    {{ form_errors.error_count > 1 ? 'were' : 'was' }}
+                    {{ form_errors.error_count }}
+                    {{ form_errors.error_count > 1 ? 'errors' : 'error' }}:
+                </h3>
+                <div class="mt-2 text-sm text-red-700">
+                    <ul role="list" class="list-disc space-y-1 pl-5">
+                        {% for field, errors in form_errors %}
+                            {% for error in errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}

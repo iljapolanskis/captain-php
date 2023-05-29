@@ -1,12 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-    content: [
-        "./resources/js/*.js",
-        "./views/*.twig",
-        "./views/**/*.html",
-        "./views/**/*.twig",
-        "./views/elements/*.twig"
-    ],
+    content: ["./resources/js/*.js", "./views/*.twig", "./views/**/*.html", "./views/**/*.twig", "./views/elements/*.twig"],
     darkMode: 'class',
     presets: [],
     theme: {
@@ -789,5 +783,8 @@ module.exports = {
         zIndex: {
             auto: 'auto', 0: '0', 10: '10', 20: '20', 30: '30', 40: '40', 50: '50',
         },
-    }, plugins: [],
+    },
+    plugins: [
+        require('@tailwindcss/forms'),
+    ],
 }

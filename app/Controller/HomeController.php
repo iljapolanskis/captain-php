@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use Predis\Client as RedisClient;
+use App\Api\AuthInterface;
+use App\Api\Manager\CategoryProviderInterface;
+use App\Api\Manager\PostProviderInterface;
 use Slim\Psr7\Request;
 use Slim\Psr7\Response;
 use Slim\Views\Twig;
@@ -12,15 +14,21 @@ use Slim\Views\Twig;
 class HomeController
 {
     public function __construct(
-        private Twig $twig,
-        private RedisClient $redis,
-    ) {}
+        private readonly Twig $twig,
+        private readonly AuthInterface $auth,
+        private readonly CategoryProviderInterface $categoryProvider,
+        private readonly PostProviderInterface $postProvider
+    ) {
+    }
 
     public function index(Request $request, Response $response): Response
     {
-        return $this->twig->render($response, 'home.twig', [
-            'greetingText' => false ? 'Email sent' : 'Email not sent',
-            'visitTime' => $this->redis->incr('visits'),
+        $user = $this->auth->user();
+        return $this->twig->render($response, 'post/view.twig', [
+            'user' => $user,
+            'post' => $this->postProvider->getBySlug('test-post'),
+            'categories' => $this->categoryProvider->getParentCategories(),
+            'feed_posts' => $this->postProvider->getRecentPosts()
         ]);
     }
 }
