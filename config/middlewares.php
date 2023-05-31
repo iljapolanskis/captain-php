@@ -3,10 +3,10 @@
 declare(strict_types=1);
 
 use App\Api\ConfigProviderInterface;
-use App\ErrorFeedback\PageNotFoundRenderer;
 use App\Middleware\Session\StartSessionMiddleware;
 use App\Middleware\Session\ValidationExceptionMiddleware;
 use App\Middleware\Twig\CsrfFieldsMiddleware;
+use App\Middleware\Twig\TwigContextMiddleware;
 use App\Middleware\Twig\TwigValidationMiddleware;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
@@ -25,18 +25,13 @@ return static function (App $app) {
 
     // Twig
     $app
+        ->add(TwigContextMiddleware::class)
         ->add(CsrfFieldsMiddleware::class)
         ->add('csrf')
         ->add(TwigMiddleware::create($app, $container->get(Twig::class)))
         ->add(TwigValidationMiddleware::class)
         ->add(ValidationExceptionMiddleware::class)
         ->add(StartSessionMiddleware::class);
-
-////    if ($config->isLocal()) {
-////        $whoops = new \Whoops\Run();
-////        $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler());
-////        $whoops->register();
-//    } else {
 
     // Define Custom Error Handler
     $customErrorHandler = function (
@@ -63,6 +58,6 @@ return static function (App $app) {
         true
     );
 
-    $errorHandler = $errorMiddleware->getDefaultErrorHandler();
-    $errorHandler->registerErrorRenderer('text/html', PageNotFoundRenderer::class);
+//    $errorHandler = $errorMiddleware->getDefaultErrorHandler();
+//    $errorHandler->registerErrorRenderer('text/html', PageNotFoundRenderer::class);
 };

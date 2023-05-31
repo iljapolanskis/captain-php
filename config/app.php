@@ -12,7 +12,7 @@ return [
     'log_errors' => true,
     'log_error_details' => true,
     'session' => [
-        'lifetime' => $_ENV['SESSION_LIFETIME'] ?? 600,
+        'lifetime' => $_ENV['SESSION_LIFETIME'] ?? 7200,
         'path' => $_ENV['SESSION_PATH'] ?? '/',
         'domain' => $_ENV['SESSION_DOMAIN'] ?? $_SERVER['HTTP_HOST'],
         'secure' => $_ENV['SESSION_SECURE'] ?? true,

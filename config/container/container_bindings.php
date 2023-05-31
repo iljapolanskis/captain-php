@@ -4,11 +4,13 @@
 
 use App\Api\AuthInterface;
 use App\Api\ConfigProviderInterface;
+use App\Api\Data\ContextInterface;
 use App\Api\Manager\CategoryProviderInterface;
 use App\Api\Manager\PostProviderInterface;
 use App\Api\Manager\UserProviderInterface;
 use App\Api\RequestValidatorFactoryInterface;
 use App\Api\SessionInterface;
+use App\DTO\Context;
 use App\Exception\CsrfException;
 use App\Model\Factory\RequestValidatorFactory;
 use App\Service\AuthProviderService;
@@ -17,6 +19,7 @@ use App\Service\Manager\CategoryProviderService;
 use App\Service\Manager\PostProviderService;
 use App\Service\Manager\UserProviderService;
 use App\Service\SessionProviderService;
+use App\TwigFunctions;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
@@ -55,6 +58,7 @@ return [
     },
 
     SessionInterface::class => static fn(ConfigProviderInterface $config) => new SessionProviderService($config->getSessionConfiguration()),
+    ContextInterface::class => static fn(ContainerInterface $container) => $container->get(Context::class),
     RequestValidatorFactoryInterface::class => static fn(ContainerInterface $container) => $container->get(RequestValidatorFactory::class),
 
     ConfigProviderInterface::class => static fn() => new ConfigProviderService(require CONFIG_PATH . '/app.php'),
@@ -72,6 +76,7 @@ return [
 
         $twig->addExtension(new IntlExtension());
         $twig->addExtension(new EntryFilesTwigExtension($container));
+        $twig->addExtension(new TwigFunctions($container));
         $twig->addExtension(new AssetExtension($container->get('webpack_encore.packages')));
 
         return $twig;

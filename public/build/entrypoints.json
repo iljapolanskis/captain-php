@@ -3,24 +3,24 @@
     "app": {
       "js": [
         "/build/runtime.0120e566.js",
-        "/build/app.c31af1f9.js"
+        "/build/app.d0ba30eb.js"
       ],
       "css": [
-        "/build/app.3035e4b5.css"
+        "/build/app.6ad9c6e8.css"
       ]
     },
     "alpine": {
       "js": [
         "/build/runtime.0120e566.js",
-        "/build/306.3a65e1ef.js",
-        "/build/alpine.14923eeb.js"
+        "/build/145.7f8392fc.js",
+        "/build/alpine.673d5c07.js"
       ]
     },
     "ck-editor": {
       "js": [
         "/build/runtime.0120e566.js",
-        "/build/234.14fae342.js",
-        "/build/ck-editor.589e387a.js"
+        "/build/234.67b74b92.js",
+        "/build/ck-editor.67da1100.js"
       ]
     }
   }

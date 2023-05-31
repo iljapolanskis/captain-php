@@ -1,0 +1,21 @@
+{% extends 'layout/base.twig' %}
+
+{% block content %}
+    {% include 'user/elements/call_to_action.twig' with {
+        'title': 'Share your knowledge with the community',
+        'primary_action': {
+            'label': 'Create a post',
+            'href': path_for('post.edit')
+        },
+        'secondary_action': {
+            'label': 'Browse posts',
+            'href': path_for('post.list')
+        }
+    } %}
+
+    {% for post in posts %}
+        {% include 'post/list/item.twig' with {
+            'post': post
+        } %}
+    {% endfor %}
+{% endblock %}

@@ -14,23 +14,12 @@ use Slim\Views\Twig;
  */
 class CsrfFieldsMiddleware implements MiddlewareInterface
 {
-    /**
-     * @param \Slim\Views\Twig $twig
-     * @param \Psr\Container\ContainerInterface $container
-     */
     public function __construct(
         private readonly Twig $twig,
         private readonly ContainerInterface $container,
     ) {
     }
 
-    /**
-     * @param \Psr\Http\Message\ServerRequestInterface $request
-     * @param \Psr\Http\Server\RequestHandlerInterface $handler
-     * @return \Psr\Http\Message\ResponseInterface
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
-     */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         /** @var \Slim\Csrf\Guard $csrf */

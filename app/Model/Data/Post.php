@@ -7,6 +7,7 @@ use App\Api\Data\PostInterface;
 use App\Api\Data\UserInterface;
 use Carbon\Carbon;
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
@@ -49,6 +50,11 @@ class Post implements PostInterface
     #[ManyToMany(targetEntity: Category::class, inversedBy: 'posts')]
     #[JoinTable(name: 'posts_categories')]
     private Collection $categories;
+
+    public function __construct()
+    {
+        $this->categories = new ArrayCollection();
+    }
 
     /** @inheritDoc */
     public function getId(): int
@@ -123,10 +129,19 @@ class Post implements PostInterface
         return $this->categories->toArray();
     }
 
+    public function setCategories(array $categories): self
+    {
+        return $this;
+    }
+
     /** @inheritDoc */
     public function addCategory(CategoryInterface $category): self
     {
-        $this->categories->add($category);
+        if (!$this->categories->contains($category)) {
+            $this->categories->add($category);
+            $category->addPost($this);
+        }
+
         return $this;
     }
 

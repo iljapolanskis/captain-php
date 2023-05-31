@@ -23,6 +23,6 @@ class AuthorizeMiddleware implements MiddlewareInterface
             return $handler->handle($request->withAttribute(SessionConstants::User->value, $user));
         }
 
-        return $this->config->createResponse()->withHeader('Location', '/auth/login')->withStatus(302);
+        return $this->config->createResponse()->withHeader('Location', '/login')->withStatus(302);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Api\Manager\PostProviderInterface;
+use App\DTO\Context;
 use App\Model\Data\Post;
 use App\Service\Manager\CategoryProviderService;
 use Slim\Psr7\Request;
@@ -12,11 +13,11 @@ use Slim\Views\Twig;
 class PostController
 {
     public function __construct(
+        private readonly Context $context,
         private readonly Twig $twig,
         private readonly PostProviderInterface $postProvider,
         private readonly CategoryProviderService $categoryProvider,
-    ) {
-    }
+    ) {}
 
     public function view(Request $request, Response $response, array $args): Response
     {
@@ -32,22 +33,40 @@ class PostController
 
     public function edit(Request $request, Response $response, array $args): Response
     {
-        $post = $this->postProvider->getById($args['id']);
+        if (!isset($args['id'])) {
+            $post = null;
+        } else {
+            $post = $this->postProvider->getById($args['id']);
+        }
+
+        $categories = array_map(
+            static fn($category) => $category->getName(),
+            $this->categoryProvider->getParentCategories()
+        );
 
         return $this->twig->render($response, 'post/edit.twig', [
-            'post' => $post
+            'post' => $post,
+            'categories' => $categories
         ]);
     }
 
     public function save(Request $request, Response $response, array $args): Response
     {
-        $post = $this->postProvider->getById($args['id']);
+        $post = (new Post())->setAuthor($this->context->getUser());
 
-        if ($post === null) {
-            $post = new Post();
+        if (isset($args['id'])) {
+            $post = $this->postProvider->getById($args['id']);
         }
 
+        $post->setTitle($request->getParsedBody()['title']);
+        $post->setSlug($request->getParsedBody()['slug']);
         $post->setContent($request->getParsedBody()['content']);
+
+        // Assign categories
+        array_map(
+            fn($category) => $post->addCategory($this->categoryProvider->getByName($category)),
+            explode(',', $request->getParsedBody()['selected_categories'])
+        );
 
         $this->postProvider->save($post);
 
