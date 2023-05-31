@@ -152,19 +152,6 @@ class Transaction
     }
 
     /**
-     * @param \App\Model\Data\User $user
-     * @return Transaction
-     */
-    public function setUser(User $user): Transaction
-    {
-        $user->addTransaction($this);
-
-        $this->user = $user;
-
-        return $this;
-    }
-
-    /**
      * @return \Doctrine\Common\Collections\Collection
      */
     public function getReceipts(): Collection

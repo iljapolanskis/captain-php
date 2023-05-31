@@ -9,7 +9,7 @@
         <a href="/post" class="text-sm font-semibold leading-6 text-indigo-400">View all</a>
     </header>
     <ul role="list" class="divide-y divide-white/5">
-        {% for post in feed_posts %}
+        {% for post in context.feedPosts %}
             {% include 'elements/aside/item.twig' with {
                 'post': post
             } %}

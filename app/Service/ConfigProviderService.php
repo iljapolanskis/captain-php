@@ -13,10 +13,7 @@ use PubNub\PNConfiguration;
  */
 class ConfigProviderService implements ConfigProviderInterface
 {
-    /** @var \Doctrine\ORM\Configuration|null */
     private ?Configuration $ormConfiguration = null;
-
-    /** @var \PubNub\PNConfiguration|null */
     private ?PNConfiguration $pubNubConfig = null;
 
     /**
@@ -39,7 +36,7 @@ class ConfigProviderService implements ConfigProviderInterface
         }
 
         foreach ($path as $key) {
-            if (! isset($value[$key])) {
+            if (!isset($value[$key])) {
                 return $default;
             }
 

@@ -14,20 +14,13 @@ use App\Enum\SessionConstants;
  */
 class AuthProviderService implements AuthInterface
 {
-    /** @var \App\Api\Data\UserInterface|null */
     private ?UserInterface $user = null;
 
-    /**
-     * @param \App\Api\Manager\UserProviderInterface $userProvider
-     */
     public function __construct(
         private readonly SessionInterface $session,
         private readonly UserProviderInterface $userProvider
     ) {}
 
-    /**
-     * @return \App\Api\Data\UserInterface|null
-     */
     public function user(): ?UserInterface
     {
         if ($this->user !== null) {
@@ -42,7 +35,7 @@ class AuthProviderService implements AuthInterface
 
         $user = $this->userProvider->getById($userId);
 
-        if (! $user) {
+        if (!$user) {
             return null;
         }
 
@@ -51,19 +44,15 @@ class AuthProviderService implements AuthInterface
         return $this->user;
     }
 
-    /**
-     * @param array $credentials
-     * @return bool
-     */
     public function attemptLogin(array $credentials): bool
     {
         $user = $this->userProvider->getByUsername($credentials['name']);
 
-        if (! $user) {
+        if (!$user) {
             return false;
         }
 
-        if (! $this->verifyCredentials($user, $credentials)) {
+        if (!$this->verifyCredentials($user, $credentials)) {
             return false;
         }
 
@@ -72,11 +61,6 @@ class AuthProviderService implements AuthInterface
         return true;
     }
 
-    /**
-     * @param \App\Api\Data\UserInterface $user
-     * @param array $credentials
-     * @return bool
-     */
     public function verifyCredentials(UserInterface $user, array $credentials): bool
     {
         return password_verify($credentials['password'], $user->getPassword());
@@ -89,18 +73,12 @@ class AuthProviderService implements AuthInterface
         $this->session->regenerate();
     }
 
-    /**
-     * @return void
-     */
     public function logOut(): void
     {
         $this->session->forget(SessionConstants::User->value);
         $this->user = null;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function register(RegisterUserData $data): UserInterface
     {
         $user = $this->userProvider->createUser($data);

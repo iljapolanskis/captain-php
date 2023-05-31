@@ -49,9 +49,8 @@
                         <li>
                             <ul role="list" class="-mx-2 space-y-1">
                                 {% for category in categories %}
-                                    {% include('elements/navigation/item.twig') with {
-                                        'url': '/post/' ~ category.name,
-                                        'label': category.name,
+                                    {% include 'ui/elements/navigation/item.twig' with {
+                                        'category': category,
                                     } %}
                                 {% endfor %}
                             </ul>

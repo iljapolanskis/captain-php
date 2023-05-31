@@ -1,0 +1,25 @@
+{# Expected [
+    'title' => 'Share your knowledge with the world',
+    'primary_action' => {
+        'label' => 'Get started',
+        'href' => '#',
+    },
+    'secondary_action' => {
+        'label' => 'Learn more',
+        'href' => '#',
+    },
+] #}
+<div class="text-white">
+    <div class="mx-auto max-w-7xl px-6 py-12 sm:py-8 lg:px-8">
+        <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">{{ title }}</h2>
+        <div class="mt-10 flex items-center gap-x-6">
+            <a href="{{ primary_action.href }}"
+               class="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                {{ primary_action.label }}
+            </a>
+            <a href="{{ secondary_action.href }}" class="text-sm font-semibold leading-6">
+                {{ secondary_action.label }} <span aria-hidden="true">→</span>
+            </a>
+        </div>
+    </div>
+</div>

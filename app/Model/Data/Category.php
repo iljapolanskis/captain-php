@@ -31,9 +31,6 @@ class Category implements CategoryInterface
     #[ManyToMany(targetEntity: Post::class, mappedBy: 'categories')]
     private Collection $posts;
 
-    /**
-     *
-     */
     public function __construct()
     {
         $this->posts = new ArrayCollection();
@@ -79,7 +76,10 @@ class Category implements CategoryInterface
      */
     public function addPost(PostInterface $post): Category
     {
-        $this->posts->add($post);
+        if (!$this->posts->contains($post)) {
+            $this->posts->add($post);
+        }
+
         return $this;
     }
 

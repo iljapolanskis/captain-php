@@ -3,7 +3,9 @@
 namespace App\Model\Data;
 
 use App\Api\Data\PostInterface;
+use App\Api\Data\User\ImageInterface;
 use App\Api\Data\UserInterface;
+use App\Model\Data\User\Image;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
@@ -39,14 +41,11 @@ class User implements UserInterface
     #[Column(name: 'updated_at', type: 'datetime')]
     private \DateTime $updatedAt;
 
-    #[OneToMany(mappedBy: 'user', targetEntity: Category::class)]
-    private Collection $categories;
-
-    #[OneToMany(mappedBy: 'user', targetEntity: Transaction::class)]
-    private Collection $transactions;
-
     #[OneToMany(mappedBy: 'user', targetEntity: Post::class)]
     private Collection $posts;
+
+    #[OneToMany(mappedBy: 'user', targetEntity: Image::class)]
+    private Collection $images;
 
     public function __construct()
     {
@@ -164,42 +163,6 @@ class User implements UserInterface
     }
 
     /**
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getCategories(): Collection
-    {
-        return $this->categories;
-    }
-
-    /**
-     * @param \App\Model\Data\Category $category
-     * @return User
-     */
-    public function addCategory(Category $category): User
-    {
-        $this->categories->add($category);
-        return $this;
-    }
-
-    /**
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getTransactions(): Collection
-    {
-        return $this->transactions;
-    }
-
-    /**
-     * @param \App\Model\Data\Transaction $transaction
-     * @return User
-     */
-    public function addTransaction(Transaction $transaction): User
-    {
-        $this->transactions->add($transaction);
-        return $this;
-    }
-
-    /**
      * @return PostInterface[]
      */
     public function getPosts(): array
@@ -208,12 +171,30 @@ class User implements UserInterface
     }
 
     /**
-     * @param \App\Model\Data\Post $post
+     * @param \App\Api\Data\PostInterface $post
      * @return User
      */
-    public function addPost(Post $post): User
+    public function addPost(PostInterface $post): User
     {
         $this->posts->add($post);
+        return $this;
+    }
+
+    /**
+     * @return ImageInterface[]
+     */
+    public function getImages(): array
+    {
+        return $this->images->toArray();
+    }
+
+    /**
+     * @param \App\Api\Data\User\ImageInterface $image
+     * @return User
+     */
+    public function addImage(ImageInterface $image): User
+    {
+        $this->images->add($image);
         return $this;
     }
 }

@@ -9,6 +9,9 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
+/**
+ * TODO: This middleware should implement ACL in future
+ */
 class AuthenticateMiddleware implements MiddlewareInterface
 {
     public function __construct(private readonly AuthInterface $auth) {}

@@ -23,13 +23,25 @@ return static function (App $app) {
     $app->post('/logout', [AuthController::class, 'logout'])->add(AuthorizeMiddleware::class);
 
     // Profile
-    $app->get('/profile', [UserController::class, 'index'])->add(AuthorizeMiddleware::class);
+    $app->get('/dashboard', [UserController::class, 'dashboard'])
+        ->setName('dashboard')
+        ->add(AuthorizeMiddleware::class);
 
     // Posts
-    $app->post('post', [PostController::class, 'create'])->add(AuthorizeMiddleware::class);
-    $app->get('/post/edit[/{id}]', [PostController::class, 'edit'])->add(AuthorizeMiddleware::class);
-    $app->post('/post/edit[/{id}]', [PostController::class, 'edit'])->add(AuthorizeMiddleware::class);
-    $app->post('/post/delete', [PostController::class, 'delete']);
-    $app->get('/post/view[/{slug}]', [PostController::class, 'view']);
-    $app->get('/post[/{category}]', [PostController::class, 'list']);
+    $app->post('post', [PostController::class, 'create'])
+        ->setName('post.save')
+        ->add(AuthorizeMiddleware::class);
+    $app->get('/post/view[/{slug}]', [PostController::class, 'view'])
+        ->setName('post.view');
+    $app->get('/post/list[/{category}]', [PostController::class, 'list'])
+        ->setName('post.list');
+    $app->get('/post/edit[/{id}]', [PostController::class, 'edit'])
+        ->setName('post.edit')
+        ->add(AuthorizeMiddleware::class);
+    $app->post('/post/edit[/{id}]', [PostController::class, 'save'])
+        ->setName('post.save')
+        ->add(AuthorizeMiddleware::class);
+    $app->post('/post/delete', [PostController::class, 'delete'])
+        ->setName('post.delete')
+        ->add(AuthorizeMiddleware::class);
 };
